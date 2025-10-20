@@ -10,7 +10,7 @@ public class ValidationService {
             "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
+            "^(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!¡¿?.*(){}\\[\\]|\\\\/'\"<>~`_\\-]).{8,}$");
 
     /**
      * Comprueba si un String no es nulo ni está vacío (después de quitar espacios).
