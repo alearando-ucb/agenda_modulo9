@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { login } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { login as apiLogin } from '../services/api';
 import { Button, TextField, Container, Typography, Box, Alert } from '@mui/material';
 
-const Login = () => {
+const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,9 +18,9 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await login(username, password);
-      console.log('Login successful:', response.data);
-      // Here you would typically save the user data/token and redirect
+      const response = await apiLogin(username, password);
+      login(response.data); // Save user to context
+      navigate('/agenda'); // Redirect to agenda
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
         setError(err.response.data.error);
@@ -87,4 +91,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

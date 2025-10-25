@@ -11,4 +11,8 @@ export const login = (username, password) => {
   return apiClient.post('/clientes/login', { username, password });
 };
 
+export const getEventos = (clienteId) => {
+  return apiClient.get(`/eventos/${clienteId}`);
+};
+
 export default apiClient;
