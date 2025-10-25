@@ -72,4 +72,20 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
+    public Cliente getLogin(String username, String password) {
+        Optional<Cliente> clienteOptional = clienteRepository.findByUsername(username);
+        if(clienteOptional.isEmpty()){
+            throw new IllegalArgumentException("Usuario o contraseña incorrecto");
+        }
+
+        String encodePassword;
+        encodePassword = passwordEncoder.encode(password);
+
+        if(!clienteOptional.get().getPassword().equals(encodePassword)){
+            throw new IllegalArgumentException("Usuario o contraseña incorrecto");
+        }
+
+        return clienteOptional.get();
+    }
+
 }

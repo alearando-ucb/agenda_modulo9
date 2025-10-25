@@ -37,4 +37,14 @@ public class ClienteController {
 
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody ClienteRequest clienteRequest) {
+        try{
+            Cliente cliente = clienteService.getLogin(clienteRequest.getUsername(), clienteRequest.getPassword());
+            return new ResponseEntity<>(ClienteMapper.toClienteResponse(cliente), HttpStatus.OK);
+        }catch(IllegalArgumentException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
