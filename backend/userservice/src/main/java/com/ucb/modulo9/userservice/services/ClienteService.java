@@ -8,21 +8,27 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ucb.modulo9.userservice.config.RabbitMQConfig;
 import com.ucb.modulo9.userservice.entities.Cliente;
 import com.ucb.modulo9.userservice.exceptions.CustomValidationException;
 import com.ucb.modulo9.userservice.repositories.ClienteRepository;
+import com.ucb.modulo9.userservice.services.dtos.ClienteCreatedDTO;
+
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 @Service
 public class ClienteService {
 
-    private ClienteRepository clienteRepository;
-    private ValidationService validationService;
-    private PasswordEncoder passwordEncoder;
+    private final ClienteRepository clienteRepository;
+    private final ValidationService validationService;
+    private final PasswordEncoder passwordEncoder;
+    private final RabbitTemplate rabbitTemplate;
 
-    public ClienteService(ClienteRepository clienteRepository, ValidationService validationService, PasswordEncoder passwordEncoder) {
+    public ClienteService(ClienteRepository clienteRepository, ValidationService validationService, PasswordEncoder passwordEncoder, RabbitTemplate rabbitTemplate) {
         this.clienteRepository = clienteRepository;
         this.validationService = validationService;
         this.passwordEncoder = passwordEncoder;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public Cliente createCliente(Cliente cliente) {
@@ -69,7 +75,14 @@ public class ClienteService {
         }
 
         cliente.setPassword(passwordEncoder.encode(cliente.getPassword()));
-        return clienteRepository.save(cliente);
+        Cliente savedCliente = clienteRepository.save(cliente);
+
+        // Enviar evento a RabbitMQ
+        ClienteCreatedDTO dto = new ClienteCreatedDTO();
+        dto.fromCliente(savedCliente);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, dto);
+
+        return savedCliente;
     }
 
     public Cliente getLogin(String username, String password) {
