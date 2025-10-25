@@ -10,13 +10,15 @@ const CreateEventPage = () => {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [fecha, setFecha] = useState('');
-  const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({}); // State for field-specific errors
+  const [generalError, setGeneralError] = useState(''); // State for general errors
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setFieldErrors({}); // Clear previous field errors
+    setGeneralError(''); // Clear previous general error
 
     const eventoData = {
       titulo,
@@ -29,10 +31,21 @@ const CreateEventPage = () => {
       await createEvento(eventoData);
       navigate('/agenda'); // Redirect to agenda on success
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        setError(err.response.data.error);
-      } else {
-        setError('Ocurrió un error inesperado al crear el evento.');
+      if (err.response && err.response.data) {
+        // Backend returns a map of errors for CustomValidationException
+        if (err.response.status === 400 && (err.response.data.titulo || err.response.data.descripcion || err.response.data.fecha)) {
+          const errors = {};
+          if (err.response.data.titulo) errors.titulo = err.response.data.titulo.join('; ');
+          if (err.response.data.descripcion) errors.descripcion = err.response.data.descripcion.join('; ');
+          if (err.response.data.fecha) errors.fecha = err.response.data.fecha.join('; ');
+          setFieldErrors(errors);
+        } else if (err.response.data.error) { // Generic error message from backend
+          setGeneralError(err.response.data.error);
+        } else { // Fallback for other backend errors
+          setGeneralError('Ocurrió un error al crear el evento.');
+        }
+      } else { // Network or unexpected error
+        setGeneralError('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.');
       }
       console.error('Create event error:', err);
     } finally {
@@ -64,6 +77,8 @@ const CreateEventPage = () => {
             autoFocus
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
+            error={!!fieldErrors.titulo}
+            helperText={fieldErrors.titulo}
           />
           <TextField
             margin="normal"
@@ -76,6 +91,8 @@ const CreateEventPage = () => {
             rows={4}
             value={descripcion}
             onChange={(e) => setDescripcion(e.target.value)}
+            error={!!fieldErrors.descripcion}
+            helperText={fieldErrors.descripcion}
           />
           <TextField
             margin="normal"
@@ -90,10 +107,12 @@ const CreateEventPage = () => {
             }}
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
+            error={!!fieldErrors.fecha}
+            helperText={fieldErrors.fecha}
           />
-          {error && (
+          {generalError && (
             <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
-              {error}
+              {generalError}
             </Alert>
           )}
           <Button

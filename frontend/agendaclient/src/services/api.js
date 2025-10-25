@@ -19,4 +19,8 @@ export const createEvento = (eventoData) => {
   return apiClient.post('/eventos/create', eventoData);
 };
 
+export const registerClient = (clientData) => {
+  return apiClient.post('/clientes/create', clientData);
+};
+
 export default apiClient;

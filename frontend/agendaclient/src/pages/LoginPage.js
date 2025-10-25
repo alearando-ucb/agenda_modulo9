@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { login as apiLogin } from '../services/api';
-import { Button, TextField, Container, Typography, Box, Alert } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, Alert, Link } from '@mui/material'; // Import Link
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -85,6 +85,9 @@ const LoginPage = () => {
           >
             {loading ? 'Iniciando Sesión...' : 'Iniciar Sesión'}
           </Button>
+          <Link href="/register" variant="body2">
+            ¿No tienes una cuenta? Regístrate
+          </Link>
         </Box>
       </Box>
     </Container>

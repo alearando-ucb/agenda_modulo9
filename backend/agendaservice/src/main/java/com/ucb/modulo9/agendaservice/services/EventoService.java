@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ucb.modulo9.agendaservice.entities.Cliente;
 import com.ucb.modulo9.agendaservice.entities.Evento;
+import com.ucb.modulo9.agendaservice.exceptions.CustomValidationException;
 import com.ucb.modulo9.agendaservice.repositories.ClienteRepository;
 import com.ucb.modulo9.agendaservice.repositories.EventoRepository;
 
@@ -47,7 +48,7 @@ public class EventoService {
         }
 
         if (!errors.isEmpty()) {
-            throw new IllegalArgumentException("Errores de validación: " + errors.toString());
+            throw new CustomValidationException(errors);
         }
 
         evento.setCliente(clienteOpt.get());
