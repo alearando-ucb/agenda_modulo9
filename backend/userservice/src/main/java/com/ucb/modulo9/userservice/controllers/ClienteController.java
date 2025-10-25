@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ucb.modulo9.userservice.controllers.dtos.ClienteRequest;
+import com.ucb.modulo9.userservice.controllers.dtos.LoginRequest;
 import com.ucb.modulo9.userservice.controllers.mappers.ClienteMapper;
 import com.ucb.modulo9.userservice.entities.Cliente;
 import com.ucb.modulo9.userservice.exceptions.CustomValidationException;
@@ -38,12 +39,14 @@ public class ClienteController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody ClienteRequest clienteRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try{
-            Cliente cliente = clienteService.getLogin(clienteRequest.getUsername(), clienteRequest.getPassword());
+            Cliente cliente = clienteService.login(loginRequest.getUsername(), loginRequest.getPassword());
             return new ResponseEntity<>(ClienteMapper.toClienteResponse(cliente), HttpStatus.OK);
         }catch(IllegalArgumentException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            java.util.Map<String, String> errorResponse = new java.util.HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
     }
 
