@@ -54,4 +54,14 @@ public class EventoService {
         return eventoRepository.save(evento);
     }
 
+    public List<Evento> getEventoByCliente(Long userId) {
+
+        Optional<Cliente> clienteOpt = clienteRepository.findById(userId);
+        if (clienteOpt.isEmpty()) {
+            throw new IllegalArgumentException("Cliente no encontrado con ID: " + userId);
+        }
+        
+        return eventoRepository.findAllByClienteId(userId);
+    }
+
 }
