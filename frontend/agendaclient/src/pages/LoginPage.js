@@ -43,6 +43,9 @@ const LoginPage = () => {
           alignItems: 'center',
         }}
       >
+        <Typography component="h1" variant="h4" sx={{ mb: 4 }}>
+          Agenda App
+        </Typography>
         <Typography component="h1" variant="h5">
           Iniciar Sesión
         </Typography>
