@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getEventos } from '../services/api';
 import { Button, Container, Typography, Box, List, ListItem, ListItemText, Card, CardContent, CircularProgress, Alert } from '@mui/material';
 
 const AgendaPage = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [eventos, setEventos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -29,6 +31,10 @@ const AgendaPage = () => {
     // The router will automatically redirect to login
   };
 
+  const handleAddEvent = () => {
+    navigate('/agenda/nuevo');
+  };
+
   return (
     <Container maxWidth="md">
       <Box sx={{ my: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -36,7 +42,7 @@ const AgendaPage = () => {
           Agenda de {user ? user.nombre : ''}
         </Typography>
         <Box>
-          <Button variant="contained" color="primary" sx={{ mr: 2 }}>
+          <Button variant="contained" color="primary" sx={{ mr: 2 }} onClick={handleAddEvent}>
             Agregar Nuevo Evento
           </Button>
           <Button variant="outlined" color="secondary" onClick={handleLogout}>

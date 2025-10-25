@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import AgendaPage from './pages/AgendaPage';
+import CreateEventPage from './pages/CreateEventPage'; // New import
 import { CssBaseline } from '@mui/material';
 
 // A wrapper for protected routes
@@ -27,6 +28,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <AgendaPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route // New Route for creating events
+          path="/agenda/nuevo" 
+          element={
+            <ProtectedRoute>
+              <CreateEventPage />
             </ProtectedRoute>
           } 
         />

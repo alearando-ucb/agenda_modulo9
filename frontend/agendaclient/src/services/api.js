@@ -15,4 +15,8 @@ export const getEventos = (clienteId) => {
   return apiClient.get(`/eventos/${clienteId}`);
 };
 
+export const createEvento = (eventoData) => {
+  return apiClient.post('/eventos/create', eventoData);
+};
+
 export default apiClient;
