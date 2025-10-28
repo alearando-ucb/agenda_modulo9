@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.ucb.modulo9</groupId>
 	<artifactId>agendaservice</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<name>agendaservice</name>
 	<description>Micro servicio de contactos</description>
 	<url/>

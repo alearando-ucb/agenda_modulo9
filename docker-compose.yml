@@ -95,6 +95,8 @@ services:
       - userservice_db
       - rabbitmq
     restart: unless-stopped
+    volumes:
+      - userservice_avatars_data:/app/avatars
 
   agendaservice:
     image: alearandoesp/agendaservice:1.0.0
@@ -171,6 +173,10 @@ volumes:
   # Volumen para RabbitMQ
   rabbitmq_data:
     name: rabbitmq_data
+    driver: local
+
+  userservice_avatars_data:
+    name: userservice_avatars_data
     driver: local
 
 networks:

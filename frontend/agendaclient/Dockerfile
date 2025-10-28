@@ -27,7 +27,7 @@ FROM nginx:alpine as nginx-server
 # Agregamos información al contenedor
 LABEL maintainer="Alejandro Marcelo Arando Espejo <alejandro.arando@ucb.edu.bo>"
 LABEL description="Micro servicio que gestiona el API Gateway."
-LABEL version="1.0"
+LABEL version="1.0.2"
 
 # Copiamos solo los archivos estáticos compilados de la etapa 'builder' al directorio raíz de Nginx.
 COPY --from=builder /app/build /usr/share/nginx/html

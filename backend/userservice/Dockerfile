@@ -7,7 +7,7 @@ WORKDIR /app
 # Agregamos información al contenedor
 LABEL maintainer="Alejandro Marcelo Arando Espejo <alejandro.arando@ucb.edu.bo>"
 LABEL description="Micro servicio que gestiona los usuarios."
-LABEL version="1.0"
+LABEL version="1.0.2"
 
 # Documentación de variables de entorno requeridas para la configuración del servicio
 LABEL env.SERVER_PORT="Puerto del servicio (default: 8081)"
@@ -20,9 +20,11 @@ LABEL env.RABBITMQ_HOST="Host de RabbitMQ"
 LABEL env.RABBITMQ_PORT="Puerto de RabbitMQ"
 LABEL env.RABBITMQ_USERNAME="Usuario de RabbitMQ"
 LABEL env.RABBITMQ_PASSWORD="Contraseña de RabbitMQ"
+LABEL volume.avatars.path="/app/avatars"
+LABEL volume.avatars.description="Se requiere un volumen persistente para almacenar los avatares de los usuarios. Montar en /app/avatars."
 
 # Copiamos el archivo JAR construido en el contenedor
-COPY target/userservice-0.0.1-SNAPSHOT.jar app.jar
+COPY target/userservice-1.0.2-SNAPSHOT.jar app.jar
 
 
 # Exponemos el puerto definido en la variable de entorno (para documentación y configuración de red)
