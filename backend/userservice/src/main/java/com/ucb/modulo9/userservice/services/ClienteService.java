@@ -4,6 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +30,9 @@ public class ClienteService {
     private final ValidationService validationService;
     private final PasswordEncoder passwordEncoder;
     private final RabbitTemplate rabbitTemplate;
+
+    @Value("${app.avatar.upload-dir}")
+    private String uploadDir;
 
     public ClienteService(ClienteRepository clienteRepository, ValidationService validationService, PasswordEncoder passwordEncoder, RabbitTemplate rabbitTemplate) {
         this.clienteRepository = clienteRepository;
@@ -96,6 +106,38 @@ public class ClienteService {
         }
 
         return clienteOptional.get();
+    }
+
+    public String uploadAvatar(Long clientId, MultipartFile file) throws IOException {
+        Optional<Cliente> clienteOptional = clienteRepository.findById(clientId);
+        if (clienteOptional.isEmpty()) {
+            throw new IllegalArgumentException("Cliente no encontrado");
+        }
+
+        Cliente cliente = clienteOptional.get();
+
+        // Generate unique filename
+        String originalFilename = file.getOriginalFilename();
+        String fileExtension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+        String filename = UUID.randomUUID().toString() + fileExtension;
+
+        // Create upload directory if it doesn't exist
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Files.createDirectories(uploadPath);
+
+        // Save the file
+        Path filePath = uploadPath.resolve(filename);
+        Files.copy(file.getInputStream(), filePath);
+
+        // Update client with avatar URL
+        String avatarUrl = "/avatars/" + filename; // This will be the URL to access the avatar
+        cliente.setAvatarUrl(avatarUrl);
+        clienteRepository.save(cliente);
+
+        return avatarUrl;
     }
 
 }

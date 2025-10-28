@@ -9,7 +9,8 @@ import { CssBaseline } from '@mui/material';
 
 // A wrapper for protected routes
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth(); // Also get user for more context
+  console.log('ProtectedRoute: isAuthenticated =', isAuthenticated, 'User =', user);
   if (!isAuthenticated) {
     // user is not authenticated
     return <Navigate to="/login" />;

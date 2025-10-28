@@ -6,8 +6,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const login = (userData) => {
+    console.log('AuthContext: userData received for login:', userData);
     setUser(userData);
-    // In a real app, you'd also store the token, e.g., in localStorage
+    console.log('AuthContext: user state after login:', userData);
   };
 
   const logout = () => {

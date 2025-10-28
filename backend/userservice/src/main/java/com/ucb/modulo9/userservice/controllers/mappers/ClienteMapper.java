@@ -16,6 +16,7 @@ public class ClienteMapper {
         clienteResponse.setNombre(cliente.getNombre());
         clienteResponse.setEmail(cliente.getEmail());
         clienteResponse.setUsername(cliente.getUsername());
+        clienteResponse.setAvatarUrl(cliente.getAvatarUrl());
         return clienteResponse;
     }
 

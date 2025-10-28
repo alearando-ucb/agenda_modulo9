@@ -21,6 +21,7 @@ public class Cliente implements Serializable{
     private String email;
     private String username;
     private String password;
+    private String avatarUrl;
     private boolean deleted = false;
 
     public Cliente() {
@@ -67,6 +68,14 @@ public class Cliente implements Serializable{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public boolean isDeleted() {

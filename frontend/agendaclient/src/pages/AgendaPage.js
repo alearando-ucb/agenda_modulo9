@@ -38,17 +38,17 @@ const AgendaPage = () => {
   return (
     <Container maxWidth="md">
       <Box sx={{ my: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" component="h1">
+        <Typography variant="h4" component="h1" sx={{ display: 'flex', alignItems: 'center' }}>
+          {user && user.avatarUrl && (
+            <img src={`http://localhost:8081${user.avatarUrl}`} alt="Avatar" style={{ width: 50, height: 50, borderRadius: '50%', marginRight: 10 }} />
+          )}
           Agenda de {user ? user.nombre : ''}
         </Typography>
-        <Box>
-          <Button variant="contained" color="primary" sx={{ mr: 2 }} onClick={handleAddEvent}>
-            Agregar Nuevo Evento
-          </Button>
-          <Button variant="outlined" color="secondary" onClick={handleLogout}>
-            Cerrar Sesión
-          </Button>
-        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <Button variant="outlined" color="secondary" onClick={handleLogout}>
+              Cerrar Sesión
+            </Button>
+          </Box>
       </Box>
 
       {loading ? (
@@ -87,6 +87,12 @@ const AgendaPage = () => {
           </CardContent>
         </Card>
       )}
+
+      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+        <Button variant="contained" color="primary" onClick={handleAddEvent}>
+          Agregar Nuevo Evento
+        </Button>
+      </Box>
     </Container>
   );
 };

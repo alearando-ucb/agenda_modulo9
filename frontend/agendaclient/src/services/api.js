@@ -7,8 +7,9 @@ const apiClient = axios.create({
   }
 });
 
-export const login = (username, password) => {
-  return apiClient.post('/clientes/login', { username, password });
+export const login = async (username, password) => {
+  const response = await apiClient.post('/clientes/login', { username, password });
+  return response.data;
 };
 
 export const getEventos = (clienteId) => {
@@ -19,8 +20,20 @@ export const createEvento = (eventoData) => {
   return apiClient.post('/eventos/create', eventoData);
 };
 
-export const registerClient = (clientData) => {
-  return apiClient.post('/clientes/create', clientData);
+export const registerClient = async (clientData) => {
+  const response = await apiClient.post('/clientes/create', clientData);
+  return response.data;
+};
+
+export const uploadAvatar = (clientId, file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return apiClient.post(`/clientes/uploadAvatar/${clientId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
 };
 
 export default apiClient;
