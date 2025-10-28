@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getEventos } from '../services/api';
-import { Button, Container, Typography, Box, List, ListItem, ListItemText, Card, CardContent, CircularProgress, Alert } from '@mui/material';
+import { Button, Container, Typography, Box, List, ListItem, ListItemText, Card, CardContent, CircularProgress, Alert, Link } from '@mui/material';
 
 const AgendaPage = () => {
   const { user, logout } = useAuth();
@@ -75,6 +75,22 @@ const AgendaPage = () => {
                             {new Date(evento.fecha).toLocaleString()}
                           </Typography>
                           {` — ${evento.descripcion}`}
+                          {evento.latitude && evento.longitude && (
+                            <Typography
+                              sx={{ display: 'block' }}
+                              component="span"
+                              variant="body2"
+                              color="text.secondary"
+                            >
+                              <Link
+                                href={`https://www.openstreetmap.org/?mlat=${evento.latitude}&mlon=${evento.longitude}#map=15/${evento.latitude}/${evento.longitude}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Ver en Mapa
+                              </Link>
+                            </Typography>
+                          )}
                         </>
                       }
                     />
