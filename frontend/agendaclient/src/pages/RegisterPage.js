@@ -9,6 +9,7 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [avatarFile, setAvatarFile] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({}); // State for field-specific errors
   const [generalError, setGeneralError] = useState(''); // State for general errors
@@ -19,6 +20,12 @@ const RegisterPage = () => {
     setLoading(true);
     setFieldErrors({}); // Clear previous field errors
     setGeneralError(''); // Clear previous general error
+
+    if (password !== confirmPassword) {
+      setFieldErrors(prevErrors => ({ ...prevErrors, confirmPassword: 'Las contraseñas no coinciden.' }));
+      setLoading(false);
+      return;
+    }
 
     const clientData = {
       nombre,
@@ -125,6 +132,20 @@ const RegisterPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             error={!!fieldErrors.password}
             helperText={fieldErrors.password}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="confirmPassword"
+            label="Confirmar Contraseña"
+            type="password"
+            id="confirmPassword"
+            autoComplete="new-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={!!fieldErrors.confirmPassword}
+            helperText={fieldErrors.confirmPassword}
           />
           <input
             type="file"
