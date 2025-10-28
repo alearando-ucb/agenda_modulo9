@@ -1,7 +1,7 @@
 
 services:
   discoveryservice:
-    image: alearandoesp/discoveryservice:1.0.0
+    image: alearandoesp/discoveryservice:1.0.2
     container_name: discoveryservice
     hostname: discoveryservice
     ports:
@@ -69,7 +69,7 @@ services:
     restart: unless-stopped
 
   userservice:
-    image: alearandoesp/userservice:1.0.0
+    image: alearandoesp/userservice:1.0.2
     container_name: userservice
     hostname: userservice
     env_file:
@@ -96,10 +96,10 @@ services:
       - rabbitmq
     restart: unless-stopped
     volumes:
-      - userservice_avatars_data:/app/avatars
+      - ./backend/userservice/avatars:/app/avatars
 
   agendaservice:
-    image: alearandoesp/agendaservice:1.0.0
+    image: alearandoesp/agendaservice:1.0.2
     container_name: agendaservice
     hostname: agendaservice
     env_file:
@@ -127,7 +127,7 @@ services:
     restart: unless-stopped
 
   gatewayservice:
-    image: alearandoesp/gatewayservice:1.0.0
+    image: alearandoesp/gatewayservice:1.0.2
     container_name: gatewayservice
     hostname: gatewayservice
     ports:
@@ -145,7 +145,7 @@ services:
     restart: unless-stopped
   
   agendaclient:
-    image: alearandoesp/agendaclient:1.0.0
+    image: alearandoesp/agendaclient:1.0.2
     container_name: agendaclient
     hostname: agendaclient
     env_file:
@@ -173,10 +173,6 @@ volumes:
   # Volumen para RabbitMQ
   rabbitmq_data:
     name: rabbitmq_data
-    driver: local
-
-  userservice_avatars_data:
-    name: userservice_avatars_data
     driver: local
 
 networks:
