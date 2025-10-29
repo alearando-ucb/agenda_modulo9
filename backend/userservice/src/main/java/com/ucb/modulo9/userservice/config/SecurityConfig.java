@@ -24,6 +24,8 @@ public class SecurityConfig {
         return (web) -> web.ignoring().requestMatchers(
                 new AntPathRequestMatcher("/api/v1/clientes/create"),
                 new AntPathRequestMatcher("/api/v1/clientes/login"),
+                new AntPathRequestMatcher("/api/v1/clientes/uploadAvatar/**"),
+                new AntPathRequestMatcher("/avatars/**"),
                 new AntPathRequestMatcher("/v3/api-docs/**"),
                 new AntPathRequestMatcher("/swagger-ui/**"),
                 new AntPathRequestMatcher("/swagger-ui.html")

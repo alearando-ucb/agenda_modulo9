@@ -32,5 +32,10 @@ echo Iniciando agendaservice...
 start "AgendaService" cmd /k "mvn spring-boot:run"
 
 cd %CURRENT_DIR%
+echo Iniciando agendaclient (React app)...
+cd frontend\agendaclient
+start "AgendaClient" cmd /k "npm start"
+
+cd %CURRENT_DIR%
 echo. 
 echo Comandos de inicio enviados. Las ventanas de los servicios se estan abriendo.

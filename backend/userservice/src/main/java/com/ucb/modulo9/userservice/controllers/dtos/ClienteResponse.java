@@ -10,6 +10,7 @@ public class ClienteResponse implements Serializable {
     private String nombre;
     private String email;
     private String username;
+    private String avatarUrl;
 
     public ClienteResponse() {
     }
@@ -44,6 +45,14 @@ public class ClienteResponse implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
 }

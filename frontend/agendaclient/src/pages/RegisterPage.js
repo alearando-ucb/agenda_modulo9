@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerClient } from '../services/api';
+import { registerClient, uploadAvatar } from '../services/api';
 import { Button, TextField, Container, Typography, Box, Alert, Link } from '@mui/material';
 
 const RegisterPage = () => {
@@ -9,6 +9,8 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [avatarFile, setAvatarFile] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({}); // State for field-specific errors
   const [generalError, setGeneralError] = useState(''); // State for general errors
   const [loading, setLoading] = useState(false);
@@ -19,6 +21,12 @@ const RegisterPage = () => {
     setFieldErrors({}); // Clear previous field errors
     setGeneralError(''); // Clear previous general error
 
+    if (password !== confirmPassword) {
+      setFieldErrors(prevErrors => ({ ...prevErrors, confirmPassword: 'Las contraseñas no coinciden.' }));
+      setLoading(false);
+      return;
+    }
+
     const clientData = {
       nombre,
       email,
@@ -27,7 +35,12 @@ const RegisterPage = () => {
     };
 
     try {
-      await registerClient(clientData);
+      const response = await registerClient(clientData);
+      const clientId = response.id; // Assuming registerClient returns the created client with an id
+
+      if (avatarFile && clientId) {
+        await uploadAvatar(clientId, avatarFile);
+      }
       navigate('/login'); // Redirect to login on successful registration
     } catch (err) {
       if (err.response && err.response.data) {
@@ -119,6 +132,26 @@ const RegisterPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             error={!!fieldErrors.password}
             helperText={fieldErrors.password}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="confirmPassword"
+            label="Confirmar Contraseña"
+            type="password"
+            id="confirmPassword"
+            autoComplete="new-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={!!fieldErrors.confirmPassword}
+            helperText={fieldErrors.confirmPassword}
+          />
+          <input
+            type="file"
+            accept="image/*"
+            style={{ marginTop: '16px' }}
+            onChange={(e) => setAvatarFile(e.target.files[0])}
           />
           {generalError && ( // Display general errors if any
             <Alert severity="error" sx={{ width: '100%', mt: 2 }}>

@@ -1,8 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { createEvento } from '../services/api';
-import { Button, TextField, Container, Typography, Box, Alert } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, Alert, CircularProgress } from '@mui/material';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default marker icon issue with Webpack
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
 
 const CreateEventPage = () => {
   const { user } = useAuth();
@@ -10,6 +22,8 @@ const CreateEventPage = () => {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [fecha, setFecha] = useState('');
+  const [latitude, setLatitude] = useState(-19.0333); // Default to Sucre, Bolivia
+  const [longitude, setLongitude] = useState(-65.2627); // Default to Sucre, Bolivia
   const [fieldErrors, setFieldErrors] = useState({}); // State for field-specific errors
   const [generalError, setGeneralError] = useState(''); // State for general errors
   const [loading, setLoading] = useState(false);
@@ -25,6 +39,8 @@ const CreateEventPage = () => {
       descripcion,
       fecha,
       clienteId: user.id,
+      latitude,
+      longitude,
     };
 
     try {
@@ -110,6 +126,36 @@ const CreateEventPage = () => {
             error={!!fieldErrors.fecha}
             helperText={fieldErrors.fecha}
           />
+
+          <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
+            Ubicación del Evento (Arrastra el marcador o haz click en el mapa)
+          </Typography>
+          <MapContainer
+            center={[-19.0333, -65.2627]} // Default center (Sucre, Bolivia)
+            zoom={13}
+            style={{ height: '400px', width: '100%', marginBottom: '16px' }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {latitude !== null && longitude !== null && (
+              <Marker
+                position={[latitude, longitude]}
+                draggable={true}
+                eventHandlers={{
+                  dragend: (e) => {
+                    const marker = e.target;
+                    const position = marker.getLatLng();
+                    setLatitude(position.lat);
+                    setLongitude(position.lng);
+                  },
+                }}
+              />
+            )}
+            <MapClickHandler setLatitude={setLatitude} setLongitude={setLongitude} />
+          </MapContainer>
+
           {generalError && (
             <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
               {generalError}
@@ -139,3 +185,13 @@ const CreateEventPage = () => {
 };
 
 export default CreateEventPage;
+
+const MapClickHandler = ({ setLatitude, setLongitude }) => {
+  useMapEvents({
+    click: (e) => {
+      setLatitude(e.latlng.lat);
+      setLongitude(e.latlng.lng);
+    },
+  });
+  return null;
+};

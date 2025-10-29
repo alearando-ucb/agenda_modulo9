@@ -8,16 +8,21 @@ public class EventoMapper {
 
     public static Evento toEvento(EventoRequest eventoRequest) {
         Evento evento = new Evento(eventoRequest.getTitulo(), eventoRequest.getDescripcion(), eventoRequest.getFecha());
+        evento.setLatitude(eventoRequest.getLatitude());
+        evento.setLongitude(eventoRequest.getLongitude());
         return evento;
     }
 
     public static EventoResponse toEventoResponse(Evento evento) {
-        return new EventoResponse(
+        EventoResponse eventoResponse = new EventoResponse(
             evento.getId(),
             evento.getTitulo(),
             evento.getDescripcion(),
             evento.getFechaHora(),
             evento.getCliente().getId()
         );
+        eventoResponse.setLatitude(evento.getLatitude());
+        eventoResponse.setLongitude(evento.getLongitude());
+        return eventoResponse;
     }
 }

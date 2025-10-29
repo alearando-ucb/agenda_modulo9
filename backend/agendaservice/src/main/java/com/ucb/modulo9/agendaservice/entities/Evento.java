@@ -22,6 +22,8 @@ public class Evento implements java.io.Serializable {
     private String titulo;
     private String descripcion;
     private LocalDateTime fecha;
+    private Double latitude;
+    private Double longitude;
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
@@ -65,6 +67,22 @@ public class Evento implements java.io.Serializable {
 
     public void setFechaHora(LocalDateTime fecha) {
         this.fecha = fecha;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public Cliente getCliente() {

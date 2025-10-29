@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     try {
       const response = await apiLogin(username, password);
-      login(response.data); // Save user to context
+      login(response); // Save user to context
       navigate('/agenda'); // Redirect to agenda
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {

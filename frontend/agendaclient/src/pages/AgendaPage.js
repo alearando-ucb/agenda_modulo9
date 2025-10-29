@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getEventos } from '../services/api';
-import { Button, Container, Typography, Box, List, ListItem, ListItemText, Card, CardContent, CircularProgress, Alert } from '@mui/material';
+import { Button, Container, Typography, Box, List, ListItem, ListItemText, Card, CardContent, CircularProgress, Alert, Link } from '@mui/material';
 
 const AgendaPage = () => {
   const { user, logout } = useAuth();
@@ -38,17 +38,17 @@ const AgendaPage = () => {
   return (
     <Container maxWidth="md">
       <Box sx={{ my: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" component="h1">
+        <Typography variant="h4" component="h1" sx={{ display: 'flex', alignItems: 'center' }}>
+          {user && user.avatarUrl && (
+            <img src={`http://localhost:8081${user.avatarUrl}`} alt="Avatar" style={{ width: 50, height: 50, borderRadius: '50%', marginRight: 10 }} />
+          )}
           Agenda de {user ? user.nombre : ''}
         </Typography>
-        <Box>
-          <Button variant="contained" color="primary" sx={{ mr: 2 }} onClick={handleAddEvent}>
-            Agregar Nuevo Evento
-          </Button>
-          <Button variant="outlined" color="secondary" onClick={handleLogout}>
-            Cerrar Sesión
-          </Button>
-        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <Button variant="outlined" color="secondary" onClick={handleLogout}>
+              Cerrar Sesión
+            </Button>
+          </Box>
       </Box>
 
       {loading ? (
@@ -75,6 +75,22 @@ const AgendaPage = () => {
                             {new Date(evento.fecha).toLocaleString()}
                           </Typography>
                           {` — ${evento.descripcion}`}
+                          {evento.latitude && evento.longitude && (
+                            <Typography
+                              sx={{ display: 'block' }}
+                              component="span"
+                              variant="body2"
+                              color="text.secondary"
+                            >
+                              <Link
+                                href={`https://www.openstreetmap.org/?mlat=${evento.latitude}&mlon=${evento.longitude}#map=15/${evento.latitude}/${evento.longitude}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Ver en Mapa
+                              </Link>
+                            </Typography>
+                          )}
                         </>
                       }
                     />
@@ -87,6 +103,12 @@ const AgendaPage = () => {
           </CardContent>
         </Card>
       )}
+
+      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+        <Button variant="contained" color="primary" onClick={handleAddEvent}>
+          Agregar Nuevo Evento
+        </Button>
+      </Box>
     </Container>
   );
 };
