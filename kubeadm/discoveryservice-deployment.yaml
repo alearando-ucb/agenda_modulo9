@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discoveryservice-deployment
+  labels:
+    app: discoveryservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discoveryservice
+  template:
+    metadata:
+      labels:
+        app: discoveryservice
+    spec:
+      containers:
+        - name: discoveryservice
+          image: alearandoesp/discoveryservice:$(DISCOVERY_TAG)
+          ports:
+            - containerPort: 8761
+          env:
+            - name: SERVER_PORT
+              value: "8761"
+            - name: DISCOVERY_TAG
+              valueFrom:
+                configMapKeyRef:
+                  name: image-versions-configmap
+                  key: DISCOVERY_TAG

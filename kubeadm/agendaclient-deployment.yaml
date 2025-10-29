@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agendaclient-deployment
+  labels:
+    app: agendaclient
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: agendaclient
+  template:
+    metadata:
+      labels:
+        app: agendaclient
+    spec:
+      containers:
+        - name: agendaclient
+          image: alearandoesp/agendaclient:$(CLIENT_TAG)
+          ports:
+            - containerPort: 80
+          env:
+            - name: REACT_APP_API_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: common-configmap
+                  key: REACT_APP_API_BASE_URL
+            - name: CLIENT_TAG
+              valueFrom:
+                configMapKeyRef:
+                  name: image-versions-configmap
+                  key: CLIENT_TAG

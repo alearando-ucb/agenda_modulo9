@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice-db-deployment
+  labels:
+    app: userservice-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice-db
+  template:
+    metadata:
+      labels:
+        app: userservice-db
+    spec:
+      containers:
+        - name: userservice-db
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: DB_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: common-configmap
+                  key: USER_DB_NAME
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: USER_DB_USERNAME
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: USER_DB_PASSWORD
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: userservice-db-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: userservice-db-storage
+          persistentVolumeClaim:
+            claimName: userservice-db-pvc

@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice-deployment
+  labels:
+    app: userservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    metadata:
+      labels:
+        app: userservice
+    spec:
+      containers:
+        - name: userservice
+          image: alearandoesp/userservice:$(USER_TAG)
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SERVER_PORT
+              value: "8081"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discoveryservice-service:8761/eureka/
+            - name: DB_SERVER
+              value: userservice-db-service
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: common-configmap
+                  key: USER_DB_NAME
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: USER_DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: USER_DB_PASSWORD
+            - name: RABBITMQ_HOST
+              value: rabbitmq-service
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: RABBITMQ_USERNAME
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: RABBITMQ_PASSWORD
+            - name: USER_TAG
+              valueFrom:
+                configMapKeyRef:
+                  name: image-versions-configmap
+                  key: USER_TAG
+          volumeMounts:
+            - name: userservice-avatars-storage
+              mountPath: /app/avatars
+      volumes:
+        - name: userservice-avatars-storage
+          persistentVolumeClaim:
+            claimName: userservice-avatars-pvc

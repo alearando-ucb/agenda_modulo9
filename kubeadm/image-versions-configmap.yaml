@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: image-versions-configmap
+data:
+  DISCOVERY_TAG: "1.0.0"
+  USER_TAG: "1.0.0"
+  AGENDA_TAG: "1.0.0"
+  GATEWAY_TAG: "1.0.0"
+  CLIENT_TAG: "1.0.0"

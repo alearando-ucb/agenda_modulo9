@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gatewayservice-deployment
+  labels:
+    app: gatewayservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gatewayservice
+  template:
+    metadata:
+      labels:
+        app: gatewayservice
+    spec:
+      containers:
+        - name: gatewayservice
+          image: alearandoesp/gatewayservice:$(GATEWAY_TAG)
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discoveryservice-service:8761/eureka/
+            - name: GATEWAY_TAG
+              valueFrom:
+                configMapKeyRef:
+                  name: image-versions-configmap
+                  key: GATEWAY_TAG

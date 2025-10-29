@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agendaservice-deployment
+  labels:
+    app: agendaservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: agendaservice
+  template:
+    metadata:
+      labels:
+        app: agendaservice
+    spec:
+      containers:
+        - name: agendaservice
+          image: alearandoesp/agendaservice:$(AGENDA_TAG)
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SERVER_PORT
+              value: "8082"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://discoveryservice-service:8761/eureka/
+            - name: DB_SERVER
+              value: agendaservice-db-service
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: common-configmap
+                  key: AGENDA_DB_NAME
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: AGENDA_DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: AGENDA_DB_PASSWORD
+            - name: RABBITMQ_HOST
+              value: rabbitmq-service
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: RABBITMQ_USERNAME
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: common-secrets
+                  key: RABBITMQ_PASSWORD
+            - name: AGENDA_TAG
+              valueFrom:
+                configMapKeyRef:
+                  name: image-versions-configmap
+                  key: AGENDA_TAG
