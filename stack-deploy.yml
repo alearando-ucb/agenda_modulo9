@@ -1,0 +1,142 @@
+version: "3.8"
+
+services:
+  discoveryservice:
+    image: alearandoesp/discoveryservice:${DISCOVERY_TAG:-1.0.0}
+    ports:
+      - "8761:8761"
+    networks:
+      - backend_network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    env_file:
+      - ./.env
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - backend_network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  userservice_db:
+    image: mysql:8.0
+    env_file:
+      - ./.env
+    volumes:
+      - userservice_db_data:/var/lib/mysql
+    networks:
+      - userservice_network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  agendaservice_db:
+    image: mysql:8.0
+    env_file:
+      - ./.env
+    volumes:
+      - agendaservice_db_data:/var/lib/mysql
+    networks:
+      - agendaservice_network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  userservice:
+    image: alearandoesp/userservice:${USER_TAG:-1.0.0}
+    env_file:
+      - ./.env
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./avatars:/app/avatars
+    networks:
+      - backend_network
+      - userservice_network
+    depends_on:
+      - discoveryservice
+      - userservice_db
+      - rabbitmq
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  agendaservice:
+    image: alearandoesp/agendaservice:${AGENDA_TAG:-1.0.0}
+    env_file:
+      - ./.env
+    ports:
+      - "8082:8082"
+    networks:
+      - backend_network
+      - agendaservice_network
+    depends_on:
+      - discoveryservice
+      - agendaservice_db
+      - rabbitmq
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  gatewayservice:
+    image: alearandoesp/gatewayservice:${GATEWAY_TAG:-1.0.0}
+    ports:
+      - "8080:8080"
+    networks:
+      - frontend_network
+      - backend_network
+    depends_on:
+      - discoveryservice
+      - userservice
+      - agendaservice
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  agendaclient:
+    image: alearandoesp/agendaclient:${CLIENT_TAG:-1.0.0}
+    env_file:
+      - ./.env
+    ports:
+      - "9090:80"
+    networks:
+      - frontend_network
+    depends_on:
+      - gatewayservice
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  userservice_db_data:
+  agendaservice_db_data:
+  rabbitmq_data:
+
+networks:
+  frontend_network:
+    driver: overlay
+  backend_network:
+    driver: overlay
+  userservice_network:
+    driver: overlay
+  agendaservice_network:
+    driver: overlay
