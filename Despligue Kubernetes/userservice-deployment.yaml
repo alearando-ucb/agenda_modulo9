@@ -16,9 +16,10 @@ spec:
     spec:
       containers:
         - name: userservice
-          image: alearandoesp/userservice:$(USER_TAG)
+          image: alearandoesp/userservice:1.0.0
           ports:
             - containerPort: 8081
+          
           env:
             - name: SERVER_PORT
               value: "8081"

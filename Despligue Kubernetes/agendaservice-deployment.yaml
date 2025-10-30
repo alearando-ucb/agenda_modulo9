@@ -16,9 +16,10 @@ spec:
     spec:
       containers:
         - name: agendaservice
-          image: alearandoesp/agendaservice:$(AGENDA_TAG)
+          image: alearandoesp/agendaservice:1.0.0
           ports:
             - containerPort: 8082
+          
           env:
             - name: SERVER_PORT
               value: "8082"

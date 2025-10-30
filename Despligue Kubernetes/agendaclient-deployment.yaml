@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: agendaclient
-          image: alearandoesp/agendaclient:$(CLIENT_TAG)
+          image: alearandoesp/agendaclient:1.0.0
           ports:
             - containerPort: 80
           env:

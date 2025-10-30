@@ -16,9 +16,10 @@ spec:
     spec:
       containers:
         - name: gatewayservice
-          image: alearandoesp/gatewayservice:$(GATEWAY_TAG)
+          image: alearandoesp/gatewayservice:1.0.0
           ports:
             - containerPort: 8080
+          
           env:
             - name: SERVER_PORT
               value: "8080"
